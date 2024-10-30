@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,18 +28,31 @@ class menu extends ConsumerWidget {
                   MaterialPageRoute(builder: (context) => const contato()),
                 );
               },
-              child: Expanded(
+              child: SizedBox(
+                width: 300,
+                height: 70,
                 child: Card(
-                  color: Color(0XFF7D7ABC),
+                  color: Color(0XFF666A86),
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Image.asset(''),
-                        GradientText(
-                          e.toString(),
-                          style: TextStyle(fontSize: 20),
-                          colors: [Color(0xff00a9d4), Color(0xff40ffdc)],
-                        ),
+                        Row(children: [
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.person,
+                            color: Color(0XFF49393b),
+                            size: 40,
+                          ),
+                          SizedBox(width: 20),
+                          Text(
+                            e.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 24,
+                                color: Color(0XFFf0f3f5)),
+                          )
+                        ]),
                       ]),
                 ),
               ))),
