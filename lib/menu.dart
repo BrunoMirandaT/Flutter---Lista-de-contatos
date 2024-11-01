@@ -9,9 +9,15 @@ import 'package:myapp/contact_generator.dart';
 import 'package:myapp/database.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class menu extends ConsumerWidget {
   const menu({super.key});
+
+  void deleteContato(id) {
+    FirebaseFirestore.instance.collection('contato').doc(id).delete();
+  }
 
   @override
   Widget build(BuildContext context, ref) {
@@ -19,75 +25,124 @@ class menu extends ConsumerWidget {
     //final nome = "teste";
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black,
-        ),
+            backgroundColor: Colors.black,
+            title: Container(
+                child: Text(
+              'Contatos',
+              style: TextStyle(color: Color(0XFFf0f3f5), fontSize: 28),
+            ))),
         body: Center(
           child: Column(children: <Widget>[
-            GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const contato()),
-                  );
-                },
-                child: SizedBox(
-                  width: 300,
-                  height: 70,
-                  child: Card(
-                    color: Color(0XFF666A86),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Row(children: [
-                            SizedBox(width: 10),
-                            Icon(
-                              Icons.person,
-                              color: Color(0XFF101419),
-                              size: 40,
-                            ),
-                            SizedBox(width: 20),
-                            Text(
-                              '',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 24,
-                                  color: Color(0XFFf0f3f5)),
-                            )
-                          ]),
-                        ]),
-                  ),
-                ))
+            SizedBox(
+              height: 20,
+            ),
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('contato')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  List<Column> clientWidgets = [];
+                  if (snapshot.hasData) {
+                    final contatos = snapshot.data?.docs.reversed.toList();
+                    for (var contato in contatos!) {
+                      final clientWidget = Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(children: [
+                              SizedBox(width: 20),
+                              SizedBox(
+                                width: 320,
+                                height: 70,
+                                child: Card(
+                                  color: Color(0XFF666A86),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        Row(children: [
+                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.person,
+                                            color: Color(0XFF101419),
+                                            size: 40,
+                                          ),
+                                          SizedBox(width: 20),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                contato['nome'],
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 24,
+                                                    color: Color(0XFFf0f3f5)),
+                                              ),
+                                              Text(
+                                                contato['numero'],
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 12,
+                                                    color: Color(0XFFf0f3f5)),
+                                              )
+                                            ],
+                                          ),
+                                        ]),
+                                      ]),
+                                ),
+                              ),
+                              SizedBox(height: 75),
+                              Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          deleteContato(contato.id);
+                                        },
+                                        icon: Icon(Icons.delete,
+                                            color: Colors.white, size: 30)),
+                                  ])
+                            ])
+                          ]);
+                      clientWidgets.add(clientWidget);
+                    }
+                  }
+                  return Expanded(
+                      child: ListView(
+                    children: clientWidgets,
+                  ));
+                })
           ]),
         ),
         floatingActionButton: FloatingActionButton(
           highlightElevation: BorderSide.strokeAlignCenter,
-          backgroundColor: const Color.fromRGBO(31, 31, 31, 1.0),
+          backgroundColor: Color(0XFF0D0628),
           tooltip: 'New',
           shape: RoundedRectangleBorder(
-            side: const BorderSide(color: Color.fromRGBO(0, 169, 212, 1.0)),
+            side: const BorderSide(color: Color(0XFFDDD92A)),
             borderRadius: BorderRadius.circular(10),
           ),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const contato()),
+              MaterialPageRoute(builder: (context) => const novoContato()),
             );
           },
-          child: const Icon(Icons.add,
-              color: Color.fromRGBO(0, 169, 212, 1.0), size: 42),
+          child: const Icon(Icons.add, color: Color(0XFFDDD92A), size: 42),
         ));
   }
 }
 
-class contato extends StatefulWidget {
-  const contato({super.key});
+class novoContato extends StatefulWidget {
+  const novoContato({super.key});
 
   @override
-  State<contato> createState() => _addState();
+  State<novoContato> createState() => _addState();
 }
 
-class _addState extends State<contato> {
+class _addState extends State<novoContato> {
   uploadInfo() async {
     try {
       Map<String, dynamic> uploadInfo = {
