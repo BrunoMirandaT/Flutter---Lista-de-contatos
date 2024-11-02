@@ -62,44 +62,64 @@ class menu extends ConsumerWidget {
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Row(children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        editContato(
-                                                            id: contato.id)),
-                                              );
-                                            },
-                                          ),
-                                          SizedBox(width: 10),
-                                          Icon(
-                                            Icons.person,
-                                            color: Color(0XFF101419),
-                                            size: 40,
-                                          ),
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                SizedBox(width: 10),
+                                                Icon(
+                                                  Icons.person,
+                                                  color: Color(0XFF101419),
+                                                  size: 40,
+                                                ),
+                                              ]),
                                           SizedBox(width: 20),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                contato['nome'],
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 24,
-                                                    color: Color(0XFFf0f3f5)),
-                                              ),
-                                              Text(
-                                                contato['numero'],
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 12,
-                                                    color: Color(0XFFf0f3f5)),
-                                              )
-                                            ],
-                                          ),
+                                          SizedBox(
+                                              width: 190,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    contato['nome'],
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 24,
+                                                        color:
+                                                            Color(0XFFf0f3f5)),
+                                                  ),
+                                                  Text(
+                                                    contato['numero'],
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                        fontSize: 12,
+                                                        color:
+                                                            Color(0XFFf0f3f5)),
+                                                  ),
+                                                ],
+                                              )),
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                IconButton(
+                                                  icon: Icon(Icons.edit,
+                                                      color: Color(0XFFf0f3f5),
+                                                      size: 24),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              editContato(
+                                                                  id: contato
+                                                                      .id)),
+                                                    );
+                                                  },
+                                                )
+                                              ]),
                                         ]),
                                       ]),
                                 ),
@@ -110,7 +130,56 @@ class menu extends ConsumerWidget {
                                   children: [
                                     IconButton(
                                         onPressed: () {
-                                          deleteContato(contato.id);
+                                          showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                              backgroundColor: Colors.black,
+                                              title: Text("Deletar",
+                                                  style: TextStyle(
+                                                      color:
+                                                          Color(0XFFf0f3f5))),
+                                              content:
+                                                  const SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    Text(
+                                                        'Deseja deletar o contato?',
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0XFFf0f3f5))),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Sim',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0XFFDDD92A))),
+                                                  onPressed: () {
+                                                    deleteContato(contato.id);
+                                                    Navigator.of(context).pop();
+                                                    final snackBar = SnackBar(
+                                                        content: const Text(
+                                                            'Contato deletado com sucesso!'));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(snackBar);
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text('Não',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0XFFDDD92A))),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
                                         },
                                         icon: Icon(Icons.delete,
                                             color: Colors.white, size: 30)),
@@ -162,6 +231,9 @@ class _addState extends State<novoContato> {
       };
       await DatabaseMethods().addContactInfo(uploadInfo);
       Navigator.pop(context);
+      final snackBar =
+          SnackBar(content: const Text('Contato foi criado com sucesso!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (error) {
       print('Error uploading info: $error');
     }
@@ -242,7 +314,7 @@ class _addState extends State<novoContato> {
 class editContato extends StatefulWidget {
   final String id;
 
-  const editContato(String contactId, {super.key, required this.id});
+  const editContato({super.key, required this.id});
 
   @override
   State<editContato> createState() => _editState();
@@ -256,78 +328,87 @@ class _editState extends State<editContato> {
     };
     await DatabaseMethods().editContactInfo(updateInfo, id);
     Navigator.pop(context);
+    final snackBar =
+        SnackBar(content: const Text('Contato foi editado com sucesso!'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
-  TextEditingController contactnamecontroller = TextEditingController();
-  TextEditingController contactnumbercontroller = TextEditingController();
 
   get id => widget.id;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-        ),
-        body: Center(
-          child: Expanded(
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 80),
-                Text("Novo contato",
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Color.fromARGB(255, 240, 243, 245))),
-                Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 42, vertical: 40),
-                    child: Column(children: [
-                      TextField(
-                          controller: contactnamecontroller,
-                          decoration: const InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Color(0XFF666A86))),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0XFFF0F3F5)),
-                              ),
-                              hintText: 'Nome'),
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 240, 243, 245))),
-                      const SizedBox(height: 40),
-                      TextField(
-                          controller: contactnumbercontroller,
-                          decoration: const InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Color(0XFF666A86))),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Color(0XFFF0F3F5)),
-                              ),
-                              hintText: 'Numero'),
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 240, 243, 245))),
-                      SizedBox(height: 40),
-                      Container(
-                          width: 200,
-                          height: 40,
-                          child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                  backgroundColor: Color(0XFF0D0628),
-                                  elevation: 2),
-                              onPressed: () => editarContato(id),
-                              child: Text(
-                                "Editar",
-                                style: TextStyle(
-                                  color: Color(0XFFDDD92A),
-                                ),
-                              )))
-                    ]))
-              ],
-            ),
+    TextEditingController contactnamecontroller =
+        TextEditingController();
+    TextEditingController contactnumbercontroller =
+        TextEditingController();
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+          appBar: AppBar(
+            leading: const BackButton(
+          color: Color(0XFFF0F3F5), // Change the color here
+  ),
+            backgroundColor: Colors.black,
           ),
-        ));
+          body: Center(
+            child: Expanded(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 80),
+                  Text("Editar contato",
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Color.fromARGB(255, 240, 243, 245))),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 42, vertical: 40),
+                      child: Column(children: [
+                        TextField(
+                            controller: contactnamecontroller,
+                            decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0XFF666A86))),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0XFFF0F3F5)),
+                                ),
+                                hintText: 'Nome'),
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 240, 243, 245))),
+                        const SizedBox(height: 40),
+                        TextField(
+                            controller: contactnumbercontroller,
+                            decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0XFF666A86))),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0XFFF0F3F5)),
+                                ),
+                                hintText: 'Numero'),
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 240, 243, 245))),
+                        SizedBox(height: 40),
+                        Container(
+                            width: 200,
+                            height: 40,
+                            child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                    backgroundColor: Color(0XFF0D0628),
+                                    elevation: 2),
+                                onPressed: () =>
+                                 editarContato(id),
+                                child: Text(
+                                  "Editar",
+                                  style: TextStyle(
+                                    color: Color(0XFFDDD92A),
+                                  ),
+                                )))
+                      ]))
+                ],
+              ),
+            ),
+          ));
+    }
   }
-}
