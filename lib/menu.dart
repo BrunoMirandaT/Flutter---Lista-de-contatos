@@ -62,6 +62,17 @@ class menu extends ConsumerWidget {
                                           CrossAxisAlignment.stretch,
                                       children: <Widget>[
                                         Row(children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        editContato(
+                                                            id: contato.id)),
+                                              );
+                                            },
+                                          ),
                                           SizedBox(width: 10),
                                           Icon(
                                             Icons.person,
@@ -216,6 +227,99 @@ class _addState extends State<novoContato> {
                               onPressed: () => uploadInfo(),
                               child: Text(
                                 "Criar",
+                                style: TextStyle(
+                                  color: Color(0XFFDDD92A),
+                                ),
+                              )))
+                    ]))
+              ],
+            ),
+          ),
+        ));
+  }
+}
+
+class editContato extends StatefulWidget {
+  final String id;
+
+  const editContato(String contactId, {super.key, required this.id});
+
+  @override
+  State<editContato> createState() => _editState();
+}
+
+class _editState extends State<editContato> {
+  editarContato(id) async {
+    Map<String, dynamic> updateInfo = {
+      "nome": contactnamecontroller.text,
+      "numero": contactnumbercontroller.text,
+    };
+    await DatabaseMethods().editContactInfo(updateInfo, id);
+    Navigator.pop(context);
+  }
+
+  TextEditingController contactnamecontroller = TextEditingController();
+  TextEditingController contactnumbercontroller = TextEditingController();
+
+  get id => widget.id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+        ),
+        body: Center(
+          child: Expanded(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 80),
+                Text("Novo contato",
+                    style: TextStyle(
+                        fontSize: 24,
+                        color: Color.fromARGB(255, 240, 243, 245))),
+                Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 42, vertical: 40),
+                    child: Column(children: [
+                      TextField(
+                          controller: contactnamecontroller,
+                          decoration: const InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0XFF666A86))),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0XFFF0F3F5)),
+                              ),
+                              hintText: 'Nome'),
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 240, 243, 245))),
+                      const SizedBox(height: 40),
+                      TextField(
+                          controller: contactnumbercontroller,
+                          decoration: const InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0XFF666A86))),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0XFFF0F3F5)),
+                              ),
+                              hintText: 'Numero'),
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 240, 243, 245))),
+                      SizedBox(height: 40),
+                      Container(
+                          width: 200,
+                          height: 40,
+                          child: FilledButton(
+                              style: FilledButton.styleFrom(
+                                  backgroundColor: Color(0XFF0D0628),
+                                  elevation: 2),
+                              onPressed: () => editarContato(id),
+                              child: Text(
+                                "Editar",
                                 style: TextStyle(
                                   color: Color(0XFFDDD92A),
                                 ),

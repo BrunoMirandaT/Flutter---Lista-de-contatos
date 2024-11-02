@@ -7,4 +7,11 @@ class DatabaseMethods {
         .doc()
         .set(userInfoMap);
   }
+  Future editContactInfo(Map<String, dynamic> userEditMap, id) async {
+    return await FirebaseFirestore.instance
+        .collection("contato")
+        .doc(id)
+        .update(userEditMap);
+  }
+  
 }
