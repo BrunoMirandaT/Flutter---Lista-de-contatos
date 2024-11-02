@@ -3,7 +3,7 @@
 Aplicativo de contatos em flutter.
 
 # Paleta de cores:
-![image](https://github.com/user-attachments/assets/a01d3c7a-9585-4a90-8de1-d728ee8cd387)\
+![image](https://github.com/user-attachments/assets/a01d3c7a-9585-4a90-8de1-d728ee8cd387)
 
 # Telas
 ![image](https://github.com/user-attachments/assets/fe6bccaf-cef6-482e-9145-d80fec8a9939)
