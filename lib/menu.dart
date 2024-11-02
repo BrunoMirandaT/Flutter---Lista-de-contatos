@@ -246,6 +246,9 @@ class _addState extends State<novoContato> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: const BackButton(
+          color: Color(0XFFF0F3F5),
+          ),
           backgroundColor: Colors.black,
         ),
         body: Center(
