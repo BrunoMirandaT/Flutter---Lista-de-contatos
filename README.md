@@ -1,6 +1,6 @@
 # App de contatos
 
-APlicatiov de contatos em flutter.
+Aplicativo de contatos em flutter.
 
 # Paleta de cores:
 ![image](https://github.com/user-attachments/assets/a01d3c7a-9585-4a90-8de1-d728ee8cd387)\
